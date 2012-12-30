@@ -22,6 +22,9 @@
      * The index of the gamepad which this component is listening for has
      * to be specified when calling the constructor gamepad(index).
      *
+     * Important: Gamepads will only be reported by the Gamepad API once a button
+     * on the desired gamepad has been pressed.
+     *
      * For a nice Gamepad API tutorial see
      * http://www.html5rocks.com/en/tutorials/doodles/gamepad/
      *
