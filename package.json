@@ -1,0 +1,27 @@
+{
+    "name": "Gamepad",
+    "title": "Gamepad input events",
+    "version": "0.0.1",
+    "author": {
+        "name": "Sven Jacobs",
+        "url": "http://svenjacobs.com/"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/mit-license.php"
+        }
+    ],
+    "description": "Component for handling input events of gamepad devices. Also contains a GamepadMultiway component for moving an entity with a gamepad.",
+    "keywords": [
+        "gamepad",
+        "input",
+        "device",
+        "event"
+    ],
+    "jsfiddle" : "disabled", 
+    "homepage": "https://github.com/svenjacobs/crafty-gamepad",
+    "files": [
+        "src/crafty.gamepad.js" 
+    ]
+}
