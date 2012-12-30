@@ -19,7 +19,7 @@
         "device",
         "event"
     ],
-    "jsfiddle" : "disabled", 
+    "jsfiddle" : "disable", 
     "homepage": "https://github.com/svenjacobs/crafty-gamepad",
     "files": [
         "src/crafty.gamepad.js" 
