@@ -42,19 +42,20 @@
                 this._emitGamepadEvents(gamepad);
             }
         },
-        
+
         _emitGamepadEvents: function (gamepad) {
             for (var i = 0; i < gamepad.buttons.length; i++) {
-                if ((this._buttonsState[i] !== undefined && this._buttonsState[i] !== gamepad.buttons[i]) ||
-                    (this._buttonsState[i] === undefined && gamepad.buttons[i] !== 0.0)) {
-                    
+                if ((this._buttonsState[i] !== undefined && this._buttonsState[i] !== gamepad.buttons[i].value) ||
+                    (this._buttonsState[i] === undefined && gamepad.buttons[i].value !== 0.0)) {
+
                     this.trigger('GamepadKeyChange', {
                         button: i,
-                        value: gamepad.buttons[i]
+                        value: gamepad.buttons[i].value,
+                        pressed: gamepad.buttons[i].pressed
                     });
                 }
 
-                this._buttonsState[i] = gamepad.buttons[i];
+                this._buttonsState[i] = gamepad.buttons[i].value;
             }
 
             for (var j = 0; j < gamepad.axes.length; j++) {
@@ -221,7 +222,7 @@
 
             this.requires('Gamepad');
             this.gamepad(config.gamepadIndex || 0);
-            
+
             this._movement = {x: 0, y: 0};
             this._speed = {x: 3, y: 3};
             this._buttons = {};
