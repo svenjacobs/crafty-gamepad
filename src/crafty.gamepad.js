@@ -50,7 +50,7 @@
 
                     this.trigger('GamepadKeyChange', {
                         button: i,
-                        value: gamepad.buttons[i].value
+                        value: gamepad.buttons[i].value,
                         pressed: gamepad.buttons[i].pressed
                     });
                 }
