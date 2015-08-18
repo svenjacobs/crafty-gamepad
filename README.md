@@ -21,7 +21,8 @@ Crafty.e('2D, DOM, GamepadMultiway') // Entity can be controlled with gamepad
 
 The [HTML5 Gamepad API](http://www.html5rocks.com/en/tutorials/doodles/gamepad/)
 is yet experimental and subject to change. Expect this code to break until the
-Gamepad API is stable. So far has only been tested with Google Chrome and Xbox 360
-controllers.
+Gamepad API is stable. So far has only been tested with Google Chrome a Xbox 360
+controller, a Playstation 3 controller and a Thrustmaster Firestorm Dual
+Analog III.
 
 Licensed under MIT License.
