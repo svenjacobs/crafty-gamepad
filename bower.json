@@ -1,0 +1,27 @@
+{
+  "name": "crafty-gamepad",
+  "version": "0.0.1",
+  "homepage": "https://github.com/svenjacobs/crafty-gamepad",
+  "authors": [
+    "Sven Jacobs <github@svenjacobs.com>",
+    "Matthijs Groen <matthijs.groen@gmail.com>"
+  ],
+  "description": "Component for the Crafty HTML5/JavaScript game engine for handling gamepad input devices",
+  "main": "src/crafty.gamepad.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "crafty",
+    "gamepad"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ]
+}
