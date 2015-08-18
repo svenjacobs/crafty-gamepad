@@ -195,6 +195,7 @@
         },
 
         _gpmwEnterFrame: function () {
+            if (this.disableControls) return;
             if (this._movement.x !== 0) {
                 this.x += this._movement.x;
                 this.trigger('Moved', {x: this.x - this._movement.x, y: this.y});
@@ -247,6 +248,42 @@
             this.bind('GamepadAxisChange', this._gamepadAxisChange);
 
             return this;
+        },
+
+        /**@
+         * #.enableControl
+         * @comp GamepadMultiway
+         * @sign public this .enableControl()
+         *
+         * Enable the component to listen to axis events.
+         *
+         * @example
+         * ~~~
+         * this.enableControl();
+         * ~~~
+         */
+        enableControl: function () {
+            this.disableControls = false;
+            return this;
+        },
+
+        /**@
+         * #.disableControl
+         * @comp GamepadMultiway
+         * @sign public this .disableControl()
+         *
+         * Disable the component to listen to axis events.
+         *
+         * @example
+         * ~~~
+         * this.disableControl();
+         * ~~~
+         */
+
+        disableControl: function () {
+            this.disableControls = true;
+            return this;
         }
+
     });
 })();
