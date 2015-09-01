@@ -200,8 +200,8 @@
                 this._speedOnAxes[id] = newSpeed;
                 if (this._axesPressed.indexOf(id) === -1) {
                   this._axesPressed.push(id);
+                  this.trigger('NewDirection', this._movement);
                 }
-                this.trigger('NewDirection', this._movement);
             } else {
                 for (var i = 0; i < this._axesPressed.length; i++) {
                     var ap = this._axesPressed[i];
