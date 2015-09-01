@@ -104,6 +104,7 @@
      */
     Crafty.c('GamepadMultiway', {
         _AXIS_THRESHOLD: 0.75,
+        _AXIS_ANALOG_THRESHOLD: 0.1,
 
         // Key is index of gamepad.buttons[] array for specific key,
         // value is direction in degrees.
@@ -143,31 +144,77 @@
 
         _gamepadAxisChange: function (e) {
             if (e.axis in this._AXES_DIRECTION) {
-                if (e.value <= -this._AXIS_THRESHOLD || e.value >= this._AXIS_THRESHOLD) {
-                    var dir = e.value < 0 ? 0 : 1,
-                        id = e.axis + ':' + dir;
-
-                    if (this._axesPressed.indexOf(id) !== -1) {
-                        return;
-                    }
-
-                    this._movement.x = Math.round((this._movement.x + this._axes[e.axis][dir].x) * 1000) / 1000;
-                    this._movement.y = Math.round((this._movement.y + this._axes[e.axis][dir].y) * 1000) / 1000;
-                    // store axes index and direction (0 = left/up, 1 = right/down)
-                    this._axesPressed.push(id);
-                    this.trigger('NewDirection', this._movement);
+                if (this._analogControl) {
+                    this._analogHandling(e);
                 } else {
-                    for (var i = 0; i < this._axesPressed.length; i++) {
-                        var ap = this._axesPressed[i];
-                        // direction had been pressed before and now was released
-                        if (parseInt(ap.substr(0, 1), 10) === e.axis) {
-                            var s = ap.split(':');
+                    this._digitalHandling(e);
+                }
+            }
+        },
 
-                            this._movement.x = Math.round((this._movement.x - this._axes[e.axis][parseInt(s[1], 10)].x) * 1000) / 1000;
-                            this._movement.y = Math.round((this._movement.y - this._axes[e.axis][parseInt(s[1], 10)].y) * 1000) / 1000;
-                            this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
-                            this.trigger('NewDirection', this._movement);
-                        }
+        _digitalHandling: function(e) {
+            if (e.value <= -this._AXIS_THRESHOLD || e.value >= this._AXIS_THRESHOLD) {
+                var dir = e.value < 0 ? 0 : 1,
+                    id = e.axis + ':' + dir;
+
+                if (this._axesPressed.indexOf(id) !== -1) {
+                    return;
+                }
+
+                this._movement.x = Math.round((this._movement.x + this._axes[e.axis][dir].x) * 1000) / 1000;
+                this._movement.y = Math.round((this._movement.y + this._axes[e.axis][dir].y) * 1000) / 1000;
+                // store axes index and direction (0 = left/up, 1 = right/down)
+                this._axesPressed.push(id);
+                this.trigger('NewDirection', this._movement);
+            } else {
+                for (var i = 0; i < this._axesPressed.length; i++) {
+                    var ap = this._axesPressed[i];
+                    // direction had been pressed before and now was released
+                    if (parseInt(ap.substr(0, 1), 10) === e.axis) {
+                        var s = ap.split(':');
+
+                        this._movement.x = Math.round((this._movement.x - this._axes[e.axis][parseInt(s[1], 10)].x) * 1000) / 1000;
+                        this._movement.y = Math.round((this._movement.y - this._axes[e.axis][parseInt(s[1], 10)].y) * 1000) / 1000;
+                        this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
+                        this.trigger('NewDirection', this._movement);
+                    }
+                }
+            }
+        },
+
+        _analogHandling: function(e) {
+            if (e.value <= -this._AXIS_ANALOG_THRESHOLD || e.value >= this._AXIS_ANALOG_THRESHOLD) {
+                var dir = e.value < 0 ? 0 : 1,
+                    id = e.axis + ':' + dir;
+
+                var newSpeed = Math.round(Math.abs(e.value) * 1000) / 1000;
+                var oldSpeed = this._speedOnAxes[id] || 0;
+                if (newSpeed === oldSpeed) {
+                    return;
+                }
+                var dv = (newSpeed - oldSpeed);
+
+                this._movement.x = Math.round((this._movement.x + (this._axes[e.axis][dir].x * dv)) * 1000) / 1000;
+                this._movement.y = Math.round((this._movement.y + (this._axes[e.axis][dir].y * dv)) * 1000) / 1000;
+                // store axes index and direction (0 = left/up, 1 = right/down)
+                this._speedOnAxes[id] = newSpeed;
+                if (this._axesPressed.indexOf(id) === -1) {
+                  this._axesPressed.push(id);
+                }
+                this.trigger('NewDirection', this._movement);
+            } else {
+                for (var i = 0; i < this._axesPressed.length; i++) {
+                    var ap = this._axesPressed[i];
+                    // direction had been pressed before and now was released
+                    if (parseInt(ap.substr(0, 1), 10) === e.axis) {
+                        var s = ap.split(':');
+                        var v = this._speedOnAxes[ap];
+
+                        this._movement.x = Math.round((this._movement.x - (this._axes[e.axis][parseInt(s[1], 10)].x * v)) * 1000) / 1000;
+                        this._movement.y = Math.round((this._movement.y - (this._axes[e.axis][parseInt(s[1], 10)].y * v)) * 1000) / 1000;
+                        this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
+                        delete this._speedOnAxes[ap];
+                        this.trigger('NewDirection', this._movement);
                     }
                 }
             }
@@ -230,6 +277,8 @@
             this._buttonsPressed = [];
             this._axes = {};
             this._axesPressed = [];
+            this._speedOnAxes = {};
+            this._analogControl = false || config.analog;
 
             if (config.speed) {
                 if (config.speed.x && config.speed.y) {
