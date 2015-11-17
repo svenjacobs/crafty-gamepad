@@ -184,36 +184,18 @@
 
         _analogHandling: function(e) {
             if (e.value <= -this._AXIS_ANALOG_THRESHOLD || e.value >= this._AXIS_ANALOG_THRESHOLD) {
-                var dir = e.value < 0 ? 0 : 1,
-                    id = e.axis + ':' + dir;
-
-                var newSpeed = Math.round(Math.abs(e.value) * 1000) / 1000;
-                var oldSpeed = this._speedOnAxes[id] || 0;
-                if (newSpeed === oldSpeed) {
-                    return;
+                if (e.axis === 0) { // left / right
+                    this.vx = e.value * this._speed.x
                 }
-                var dv = (newSpeed - oldSpeed);
-
-                this.vx = Math.round((this.vx + (this._axes[e.axis][dir].x * dv)) * 1000) / 1000;
-                this.vy = Math.round((this.vy + (this._axes[e.axis][dir].y * dv)) * 1000) / 1000;
-                // store axes index and direction (0 = left/up, 1 = right/down)
-                this._speedOnAxes[id] = newSpeed;
-                if (this._axesPressed.indexOf(id) === -1) {
-                  this._axesPressed.push(id);
+                if (e.axis === 1) { // up / down
+                    this.vy = e.value * this._speed.y
                 }
             } else {
-                for (var i = 0; i < this._axesPressed.length; i++) {
-                    var ap = this._axesPressed[i];
-                    // direction had been pressed before and now was released
-                    if (parseInt(ap.substr(0, 1), 10) === e.axis) {
-                        var s = ap.split(':');
-                        var v = this._speedOnAxes[ap];
-
-                        this.vx = Math.round((this.vx - (this._axes[e.axis][parseInt(s[1], 10)].x * v)) * 1000) / 1000;
-                        this.vy = Math.round((this.vy - (this._axes[e.axis][parseInt(s[1], 10)].y * v)) * 1000) / 1000;
-                        this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
-                        delete this._speedOnAxes[ap];
-                    }
+                if (e.axis === 0) { // left / right
+                    this.vx = 0
+                }
+                if (e.axis === 1) { // up / down
+                    this.vy = 0
                 }
             }
         },
