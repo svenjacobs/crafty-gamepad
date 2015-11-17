@@ -14,7 +14,7 @@ Crafty.e('2D, DOM, Gamepad')
 
 Crafty.e('2D, DOM, GamepadMultiway') // Entity can be controlled with gamepad
     .gamepadMultiway({
-        speed: 2,
+        speed: 100, // Speed is in px/sec
         gamepadIndex: 0
     });
 ```
@@ -26,3 +26,12 @@ controller, a Playstation 3 controller and a Thrustmaster Firestorm Dual
 Analog III.
 
 Licensed under MIT License.
+
+# Crafty support
+
+This version of the component requires Crafty 0.7.0 or higher.
+(speed is in px/sec and based on the Motion component)
+
+For Gamepad support for Crafty 0.6.x, please use version 0.0.1 of this
+component. (where speed is in px/frame)
+

@@ -1,11 +1,15 @@
 {
     "name": "Gamepad",
     "title": "Gamepad input events",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": {
         "name": "Sven Jacobs",
         "url": "http://svenjacobs.com/"
     },
+    "contributors": [{
+        "name": "Matthijs Groen",
+        "email": "matthijs.groen@gmail.com"
+    }],
     "licenses": [
         {
             "type": "MIT",
@@ -19,9 +23,9 @@
         "device",
         "event"
     ],
-    "jsfiddle" : "disable", 
+    "jsfiddle" : "disable",
     "homepage": "https://github.com/svenjacobs/crafty-gamepad",
     "files": [
-        "src/crafty.gamepad.js" 
+        "src/crafty.gamepad.js"
     ]
 }

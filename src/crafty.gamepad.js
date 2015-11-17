@@ -126,18 +126,20 @@
             3: [-90, 90]  // right vertical
         },
 
+        init: function() {
+            this.requires("Motion, Gamepad");
+        },
+
         _gamepadKeyChange: function (e) {
             if (e.button in this._BUTTONS_DIRECTION) {
                 if (e.value === 1.0 && this._buttonsPressed.indexOf(e.button) === -1) {
-                    this._movement.x = Math.round((this._movement.x + this._buttons[e.button].x) * 1000) / 1000;
-                    this._movement.y = Math.round((this._movement.y + this._buttons[e.button].y) * 1000) / 1000;
+                    this.vx = Math.round((this.vx + this._buttons[e.button].x) * 1000) / 1000;
+                    this.vy = Math.round((this.vy + this._buttons[e.button].y) * 1000) / 1000;
                     this._buttonsPressed.push(e.button);
-                    this.trigger('NewDirection', this._movement);
                 } else if (e.value === 0.0 && this._buttonsPressed.indexOf(e.button) !== -1) {
-                    this._movement.x = Math.round((this._movement.x - this._buttons[e.button].x) * 1000) / 1000;
-                    this._movement.y = Math.round((this._movement.y - this._buttons[e.button].y) * 1000) / 1000;
+                    this.vx = Math.round((this.vx - this._buttons[e.button].x) * 1000) / 1000;
+                    this.vy = Math.round((this.vy - this._buttons[e.button].y) * 1000) / 1000;
                     this._buttonsPressed.splice(this._buttonsPressed.indexOf(e.button), 1);
-                    this.trigger('NewDirection', this._movement);
                 }
             }
         },
@@ -161,11 +163,10 @@
                     return;
                 }
 
-                this._movement.x = Math.round((this._movement.x + this._axes[e.axis][dir].x) * 1000) / 1000;
-                this._movement.y = Math.round((this._movement.y + this._axes[e.axis][dir].y) * 1000) / 1000;
+                this.vx = Math.round((this.vx + this._axes[e.axis][dir].x) * 1000) / 1000;
+                this.vy = Math.round((this.vy + this._axes[e.axis][dir].y) * 1000) / 1000;
                 // store axes index and direction (0 = left/up, 1 = right/down)
                 this._axesPressed.push(id);
-                this.trigger('NewDirection', this._movement);
             } else {
                 for (var i = 0; i < this._axesPressed.length; i++) {
                     var ap = this._axesPressed[i];
@@ -173,10 +174,9 @@
                     if (parseInt(ap.substr(0, 1), 10) === e.axis) {
                         var s = ap.split(':');
 
-                        this._movement.x = Math.round((this._movement.x - this._axes[e.axis][parseInt(s[1], 10)].x) * 1000) / 1000;
-                        this._movement.y = Math.round((this._movement.y - this._axes[e.axis][parseInt(s[1], 10)].y) * 1000) / 1000;
+                        this.vx = Math.round((this.vx - this._axes[e.axis][parseInt(s[1], 10)].x) * 1000) / 1000;
+                        this.vy = Math.round((this.vy - this._axes[e.axis][parseInt(s[1], 10)].y) * 1000) / 1000;
                         this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
-                        this.trigger('NewDirection', this._movement);
                     }
                 }
             }
@@ -184,38 +184,18 @@
 
         _analogHandling: function(e) {
             if (e.value <= -this._AXIS_ANALOG_THRESHOLD || e.value >= this._AXIS_ANALOG_THRESHOLD) {
-                var dir = e.value < 0 ? 0 : 1,
-                    id = e.axis + ':' + dir;
-
-                var newSpeed = Math.round(Math.abs(e.value) * 1000) / 1000;
-                var oldSpeed = this._speedOnAxes[id] || 0;
-                if (newSpeed === oldSpeed) {
-                    return;
+                if (e.axis === 0) { // left / right
+                    this.vx = e.value * this._speed.x
                 }
-                var dv = (newSpeed - oldSpeed);
-
-                this._movement.x = Math.round((this._movement.x + (this._axes[e.axis][dir].x * dv)) * 1000) / 1000;
-                this._movement.y = Math.round((this._movement.y + (this._axes[e.axis][dir].y * dv)) * 1000) / 1000;
-                // store axes index and direction (0 = left/up, 1 = right/down)
-                this._speedOnAxes[id] = newSpeed;
-                if (this._axesPressed.indexOf(id) === -1) {
-                  this._axesPressed.push(id);
-                  this.trigger('NewDirection', this._movement);
+                if (e.axis === 1) { // up / down
+                    this.vy = e.value * this._speed.y
                 }
             } else {
-                for (var i = 0; i < this._axesPressed.length; i++) {
-                    var ap = this._axesPressed[i];
-                    // direction had been pressed before and now was released
-                    if (parseInt(ap.substr(0, 1), 10) === e.axis) {
-                        var s = ap.split(':');
-                        var v = this._speedOnAxes[ap];
-
-                        this._movement.x = Math.round((this._movement.x - (this._axes[e.axis][parseInt(s[1], 10)].x * v)) * 1000) / 1000;
-                        this._movement.y = Math.round((this._movement.y - (this._axes[e.axis][parseInt(s[1], 10)].y * v)) * 1000) / 1000;
-                        this._axesPressed.splice(this._axesPressed.indexOf(ap), 1);
-                        delete this._speedOnAxes[ap];
-                        this.trigger('NewDirection', this._movement);
-                    }
+                if (e.axis === 0) { // left / right
+                    this.vx = 0
+                }
+                if (e.axis === 1) { // up / down
+                    this.vy = 0
                 }
             }
         },
@@ -241,19 +221,6 @@
             }
         },
 
-        _gpmwEnterFrame: function () {
-            if (this.disableControls) return;
-            if (this._movement.x !== 0) {
-                this.x += this._movement.x;
-                this.trigger('Moved', {x: this.x - this._movement.x, y: this.y});
-            }
-
-            if (this._movement.y !== 0) {
-                this.y += this._movement.y;
-                this.trigger('Moved', {x: this.x, y: this.y - this._movement.y});
-            }
-        },
-
         /* Constructor
          *
          * Takes a configuration object which may contain the following
@@ -271,8 +238,7 @@
             this.requires('Gamepad');
             this.gamepad(config.gamepadIndex || 0);
 
-            this._movement = {x: 0, y: 0};
-            this._speed = {x: 3, y: 3};
+            this._speed = {x: 150, y: 150};
             this._buttons = {};
             this._buttonsPressed = [];
             this._axes = {};
@@ -292,7 +258,6 @@
 
             this._calcSpeed(this._speed);
 
-            this.bind('EnterFrame', this._gpmwEnterFrame);
             this.bind('GamepadKeyChange', this._gamepadKeyChange);
             this.bind('GamepadAxisChange', this._gamepadAxisChange);
 
