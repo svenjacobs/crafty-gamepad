@@ -145,6 +145,7 @@
         },
 
         _gamepadAxisChange: function (e) {
+            if (this.disableControls) return;
             if (e.axis in this._AXES_DIRECTION) {
                 if (this._analogControl) {
                     this._analogHandling(e);
