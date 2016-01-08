@@ -145,6 +145,7 @@
         },
 
         _gamepadAxisChange: function (e) {
+            if (this.disableControls) return;
             if (e.axis in this._AXES_DIRECTION) {
                 if (this._analogControl) {
                     this._analogHandling(e);
@@ -278,6 +279,12 @@
          */
         enableControl: function () {
             this.disableControls = false;
+            if (this.disabledVelocities !== undefined) {
+              this.vx = this.disabledVelocities.x;
+              this.vy = this.disabledVelocities.y;
+
+            }
+            this.disabledVelocities = undefined;
             return this;
         },
 
@@ -296,6 +303,12 @@
 
         disableControl: function () {
             this.disableControls = true;
+            this.disabledVelocities = {
+              x: this.vx,
+              y: this.vy
+            };
+            this.vx = 0;
+            this.vy = 0;
             return this;
         }
 
