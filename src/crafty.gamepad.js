@@ -278,7 +278,7 @@
          */
         enableControl: function () {
             this.disableControls = false;
-            if (this.disabledVelocities !=== undefined) {
+            if (this.disabledVelocities !== undefined) {
               this.vx = this.disabledVelocities.x;
               this.vy = this.disabledVelocities.y;
 
