@@ -131,6 +131,7 @@
         },
 
         _gamepadKeyChange: function (e) {
+            if (this.disableControls) return;
             if (e.button in this._BUTTONS_DIRECTION) {
                 if (e.value === 1.0 && this._buttonsPressed.indexOf(e.button) === -1) {
                     this.vx = Math.round((this.vx + this._buttons[e.button].x) * 1000) / 1000;
