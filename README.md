@@ -1,3 +1,7 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+**The project is no longer maintained and is looking for a new maintainer!**
+
 Component for the [Crafty](http://craftyjs.com/) HTML5/JavaScript game engine for
 handling input events of gamepad devices. Also contains a *GamepadMultiway*
 component for moving an entity with a gamepad.
